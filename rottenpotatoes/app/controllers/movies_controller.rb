@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
   
   def movie_params
-    params.require(:movie).permit(:title, :rating, :description, :release_date)
+    params.require(:movie).permit(:title, :rating, :description, :release_date, :director)
   end
 
   def show
@@ -28,6 +28,11 @@ class MoviesController < ApplicationController
     if params[:sort] != session[:sort] or params[:ratings] != session[:ratings]
       session[:sort] = sort
       session[:ratings] = @selected_ratings
+      # if all ratings are selected, let's shorten the url
+      if @all_ratings.length == @selected_ratings.keys.length
+        session[:ratings] = nil
+        redirect_to :sort => sort and return
+      end
       redirect_to :sort => sort, :ratings => @selected_ratings and return
     end
     @movies = Movie.where(rating: @selected_ratings.keys).order(ordering)
@@ -59,6 +64,16 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+
+  def similar
+    @curr_movie = Movie.find(params[:id])
+    @criteria = params[:criteria]
+    @movies = Movie.similar_movies(@curr_movie[:id], Hash[@criteria, @curr_movie[@criteria]])
+    if @movies == nil or @movies.length == 0
+      flash[:notice] = "'#{@curr_movie.title}' has no director info"
+      return redirect_to movies_path
+    end
   end
 
 end
