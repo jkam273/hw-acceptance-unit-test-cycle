@@ -1,0 +1,8 @@
+..............
+
+2 deprecations logged to log/rspec-deprecations.log
+
+Finished in 0.19249 seconds (files took 1.67 seconds to load)
+14 examples, 0 failures
+
+Coverage report generated for Cucumber Features, RSpec to /home/ec2-user/environment/new_hw3/hw-acceptance-unit-test-cycle/rottenpotatoes/coverage. 64 / 65 LOC (98.46%) covered.
